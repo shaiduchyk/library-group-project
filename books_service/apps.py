@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class LiraryConfig(AppConfig):
+class BooksServiceConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "lirary"
+    name = "books_service"
