@@ -22,6 +22,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path(
         "api/books/",
-        include("books_service.urls", namespace="library")
+        include("books_service.urls", namespace="books_service")
     ),
 ]
