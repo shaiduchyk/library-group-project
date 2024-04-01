@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "user",
     "books_service",
     "borrowings",
+    "payment_system"
 ]
 
 AUTH_USER_MODEL = "user.User"
