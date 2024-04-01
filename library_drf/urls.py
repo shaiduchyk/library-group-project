@@ -20,12 +20,12 @@ from django.contrib import admin
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/books/",
-         include("books_service.urls",
-                 namespace="books_service")
-         ),
-    path("api/user/",
-         include("user.urls",
-                 namespace="user")
-         ),
-]
+    path(
+        "api/books/",
+        include("books_service.urls", namespace="books_service")
+    ),
+    path(
+        "api/",
+        include("borrowings.urls", namespace="borrowings")
+    ),
+
