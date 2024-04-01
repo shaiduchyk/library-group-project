@@ -30,6 +30,6 @@ urlpatterns = [
     ),
     path("api/user/", include("user.urls", namespace="user")
          ),
-    path("api/payments", include("payment_system.urls", namespace="payments")
+    path("api/payments/", include("payment_system.urls", namespace="payments")
          )
 ]
