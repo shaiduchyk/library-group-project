@@ -10,7 +10,9 @@ from books_service.models import Book
 class BookModelTest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(email="testuser@test.com", password="testpass")
+        self.user = User.objects.create_user(
+            email="testuser@test.com", password="testpass"
+        )
         self.admin = User.objects.create_superuser(
             email="admin@admin.com", password="adminpass"
         )
@@ -57,7 +59,12 @@ class BookModelTest(TestCase):
 
     def test_update_book_unauthorized(self):
         data = {"title": "Updated Book"}
-        response = self.client.patch(reverse(f"books_service:book-detail", args=[self.book.id]), data)
+        response = self.client.patch(
+            reverse(
+                f"books_service:book-detail",
+                args=[self.book.id]
+            ), data
+        )
         self.assertEqual(response.status_code, 401)
 
     def test_update_book_authorized(self):
@@ -66,11 +73,18 @@ class BookModelTest(TestCase):
             HTTP_AUTHORIZATION="Bearer "
             + str(RefreshToken.for_user(self.admin).access_token)
         )
-        response = self.client.patch(reverse(f"books_service:book-detail", args=[self.book.id]), data)
+        response = self.client.patch(
+            reverse(
+                f"books_service:book-detail",
+                args=[self.book.id]
+            ), data
+        )
         self.assertEqual(response.status_code, 200)
 
     def test_delete_book_unauthorized(self):
-        response = self.client.delete(reverse(f"books_service:book-detail", args=[self.book.id]))
+        response = self.client.delete(
+            reverse(f"books_service:book-detail", args=[self.book.id])
+        )
         self.assertEqual(response.status_code, 401)
 
     def test_delete_book_authorized(self):
@@ -78,5 +92,7 @@ class BookModelTest(TestCase):
             HTTP_AUTHORIZATION="Bearer "
             + str(RefreshToken.for_user(self.admin).access_token)
         )
-        response = self.client.delete(reverse(f"books_service:book-detail", args=[self.book.id]))
+        response = self.client.delete(
+            reverse(f"books_service:book-detail", args=[self.book.id])
+        )
         self.assertEqual(response.status_code, 204)
