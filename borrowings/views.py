@@ -1,13 +1,25 @@
-from rest_framework import generics
+from rest_framework import generics, mixins
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
+
 from .models import Borrowing
-from .serializers import DetailedBookSerializer
+from borrowings.serializers import BorrowingSerializer
 
 
-class BorrowingListView(generics.ListAPIView):
+class BorrowingViewSet(
+    GenericViewSet,
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+):
     queryset = Borrowing.objects.all()
-    serializer_class = DetailedBookSerializer
+    serializer_class = BorrowingSerializer
 
-
-class BorrowingDetailView(generics.RetrieveAPIView):
-    queryset = Borrowing.objects.all()
-    serializer_class = DetailedBookSerializer
+    @action(detail=True, methods=["post"])
+    def return_borrowing(self, request, pk=None):
+        borrowing = self.get_object()
+        borrowing.actual_return_date = request.data.get("actual_return_date")
+        borrowing.save()
+        serializer = self.get_serializer(borrowing)
+        return Response(serializer.data)
