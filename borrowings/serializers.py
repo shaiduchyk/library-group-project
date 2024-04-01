@@ -6,7 +6,7 @@ from user.serializers import UserSerializer
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
-    books = BookSerializer(many=True, read_only=False, allow_null=False)
+    book = BookSerializer(read_only=False, allow_null=False)
 
     class Meta:
         model = Borrowing
