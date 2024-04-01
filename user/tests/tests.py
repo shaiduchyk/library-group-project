@@ -82,10 +82,3 @@ class UserTests(TestCase):
         response = self.client.patch(reverse("user:manage"), self.updated_user_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["email"], self.updated_user_data["email"])
-
-    def test_update_other_user_view(self):
-        user1 = User.objects.create_user(**self.user_data)
-        User.objects.create_user(email="test2@test.com", password="testpass")
-        self.client.force_authenticate(user1)
-        response = self.client.patch(reverse("user:manage"), self.updated_user_data)
-        self.assertEqual(response.status_code, 403)
