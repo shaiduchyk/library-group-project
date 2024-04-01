@@ -36,6 +36,6 @@ class Payment(models.Model):
     )
 
     def __str__(self):
-        return (f"Status: {self.status}"
-                f"Type: {self.type}"
-                f"Money to pay: {self.money_to_pay}")
+        return (f"|Status: {self.status} | "
+                f"Type: {self.type} | "
+                f"Money to pay: {self.money_to_pay}|")
