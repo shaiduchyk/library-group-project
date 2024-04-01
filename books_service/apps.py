@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class LiraryConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'lirary'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "lirary"
