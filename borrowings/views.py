@@ -1,14 +1,14 @@
-
 from rest_framework import generics, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-
 from .models import Borrowing
-from borrowings.serializers import BorrowingSerializer
+from borrowings.serializers import (
+    BorrowingSerializer,
+    BorrowingDetailSerializer
+)
 
 
 class BorrowingViewSet(
@@ -28,7 +28,7 @@ class BorrowingViewSet(
         serializer = self.get_serializer(borrowing)
         return Response(serializer.data)
 
-    serializer_class = DetailedBookSerializer
+    serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
@@ -47,10 +47,3 @@ class BorrowingViewSet(
             queryset = queryset.filter(is_active=is_active)
 
         return queryset
-
-
-class BorrowingDetailView(generics.RetrieveAPIView):
-    queryset = Borrowing.objects.all()
-    serializer_class = DetailedBookSerializer
-    permission_classes = (IsAuthenticated,)
-
