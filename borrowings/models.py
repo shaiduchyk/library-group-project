@@ -10,6 +10,7 @@ class Borrowing(models.Model):
     actual_return_date = models.DateField()
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return (
