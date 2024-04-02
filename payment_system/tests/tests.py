@@ -9,6 +9,7 @@ from rest_framework import status
 from payment_system.models import Payment, PaymentStatus, PaymentType
 from borrowings.models import Borrowing
 from books_service.models import Book
+from payment_system.services.stripe_services import create_payment_session
 from user.models import User
 
 
@@ -190,6 +191,9 @@ class PaymentTestCase(TestCase):
             user=user
         )
 
-    def test_payment_creation(self):
-        payment = Payment.objects.create(borrowing=self.borrowing)
+    def test_create_payment_session(self):
+        payment = create_payment_session(self.borrowing)
         self.assertEqual(payment.money_to_pay, 10.00)
+        self.assertIsNotNone(payment.session_url)
+        self.assertIsNotNone(payment.session_id)
+
