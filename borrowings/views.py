@@ -1,5 +1,7 @@
-from rest_framework import generics, mixins
+from django.db import transaction
+from rest_framework import mixins
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
@@ -23,14 +25,21 @@ class BorrowingViewSet(
 
     @action(detail=True, methods=["post", "get"])
     def return_borrowing(self, request, pk=None):
-        borrowing = self.get_object()
-        borrowing.actual_return_date = request.data.get("actual_return_date")
-        borrowing.save()
-        book = borrowing.book
-        book.inventory += 1
-        book.save()
-        serializer = self.get_serializer(borrowing)
-        return Response(serializer.data)
+        with transaction.atomic():
+            borrowing = self.get_object()
+            return_date = request.data.get("actual_return_date")
+            if not return_date:
+                raise ValidationError("No actual return date provided")
+            if borrowing.is_active:
+                borrowing.actual_return_date = request.data.get("actual_return_date")
+                book = borrowing.book
+                book.inventory += 1
+                borrowing.is_active = False
+                book.save()
+                borrowing.save()
+                serializer = self.get_serializer(borrowing)
+                return Response(serializer.data)
+            raise ValidationError("This borrowing is already finished")
 
     def get_queryset(self):
         user = self.request.user
@@ -50,6 +59,6 @@ class BorrowingViewSet(
         return queryset
 
     def get_serializer_class(self):
-        if self.action == 'return_borrowing':
+        if self.action == "return_borrowing":
             return BorrowingReturnSerializer
         return BorrowingSerializer
