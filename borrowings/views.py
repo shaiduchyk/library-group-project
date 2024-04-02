@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Borrowing
 from borrowings.serializers import (
     BorrowingSerializer,
+    BorrowingReturnSerializer,
 )
 
 
@@ -20,11 +21,14 @@ class BorrowingViewSet(
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated,)
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=["post", "get"])
     def return_borrowing(self, request, pk=None):
         borrowing = self.get_object()
         borrowing.actual_return_date = request.data.get("actual_return_date")
         borrowing.save()
+        book = borrowing.book
+        book.inventory += 1
+        book.save()
         serializer = self.get_serializer(borrowing)
         return Response(serializer.data)
 
@@ -44,3 +48,8 @@ class BorrowingViewSet(
             queryset = queryset.filter(is_active=is_active)
 
         return queryset
+
+    def get_serializer_class(self):
+        if self.action == 'return_borrowing':
+            return BorrowingReturnSerializer
+        return BorrowingSerializer
