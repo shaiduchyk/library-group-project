@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 import stripe
 
-from payment_system.models import Payment
 
 load_dotenv()
 
@@ -10,6 +9,7 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 
 def create_payment_session(borrowing):
+    from payment_system.models import Payment
     total_amount = borrowing.calculate_borrowing_amount()
 
     session = stripe.checkout.Session.create(
