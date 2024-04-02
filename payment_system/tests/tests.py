@@ -172,7 +172,10 @@ class AdminSiteTests(TestCase):
 
 class PaymentTestCase(TestCase):
     def setUp(self):
-        user = User.objects.create_user(email='testuser@test.com', password='12345')
+        user = User.objects.create_user(
+            email="testuser@test.com",
+            password="12345"
+        )
 
         book = Book.objects.create(
             title="Test Book",
@@ -196,4 +199,3 @@ class PaymentTestCase(TestCase):
         self.assertEqual(payment.money_to_pay, 10.00)
         self.assertIsNotNone(payment.session_url)
         self.assertIsNotNone(payment.session_id)
-
