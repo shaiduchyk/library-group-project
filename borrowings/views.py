@@ -2,6 +2,7 @@ from django.db import transaction
 from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
@@ -13,6 +14,11 @@ from borrowings.serializers import (
 )
 
 
+class BorrowingPagination(PageNumberPagination):
+    page_size = 5
+    max_page_size = 10
+
+
 class BorrowingViewSet(
     GenericViewSet,
     mixins.CreateModelMixin,
@@ -22,6 +28,7 @@ class BorrowingViewSet(
     queryset = Borrowing.objects.all()
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated,)
+    pagination_class = BorrowingPagination
 
     @action(detail=True, methods=["post", "get"])
     def return_borrowing(self, request, pk=None):
