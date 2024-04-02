@@ -13,6 +13,11 @@ class Borrowing(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
 
+    def calculate_borrowing_amount(self):
+        borrowing_days = (self.expected_return_date - self.borrow_date).days
+        total_amount = self.book.daily_fee * borrowing_days
+        return total_amount
+
     @property
     def is_active(self):
         return self.actual_return_date is None
