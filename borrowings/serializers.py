@@ -35,6 +35,13 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "user"
         )
 
+    def validate(self, attrs):
+        borrow_date = attrs.get("borrow_date")
+        expected_return_date = attrs.get("expected_return_date")
+        if borrow_date and expected_return_date and expected_return_date < borrow_date:
+            raise serializers.ValidationError("Expected return date cannot be earlier than borrow date.")
+        return attrs
+
     def create(self, validated_data):
         with transaction.atomic():
             book_data = validated_data.pop("book")
