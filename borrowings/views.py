@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Borrowing
 from borrowings.serializers import (
     BorrowingSerializer,
-    BorrowingReturnSerializer,
+    BorrowingReturnSerializer, BorrowingDetailSerializer,
 )
 
 
@@ -28,13 +28,12 @@ class BorrowingViewSet(
         with transaction.atomic():
             borrowing = self.get_object()
             return_date = request.data.get("actual_return_date")
-            if not return_date:
-                raise ValidationError("No actual return date provided")
+            # if not return_date:
+            #     raise ValidationError("No actual return date provided")
             if borrowing.is_active:
-                borrowing.actual_return_date = request.data.get("actual_return_date")
+                borrowing.actual_return_date = return_date
                 book = borrowing.book
                 book.inventory += 1
-                borrowing.is_active = False
                 book.save()
                 borrowing.save()
                 serializer = self.get_serializer(borrowing)
@@ -59,6 +58,10 @@ class BorrowingViewSet(
         return queryset
 
     def get_serializer_class(self):
+        if self.action == "retrieve":
+            return BorrowingDetailSerializer
+
         if self.action == "return_borrowing":
             return BorrowingReturnSerializer
+
         return BorrowingSerializer
