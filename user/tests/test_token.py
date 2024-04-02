@@ -7,7 +7,10 @@ from user.models import User
 class TokenTests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(email="test@test.com", password="testpass")
+        self.user = User.objects.create_user(
+            email="test@test.com",
+            password="testpass"
+        )
 
     def test_obtain_token(self):
         data = {
