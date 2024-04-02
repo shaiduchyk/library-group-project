@@ -35,17 +35,17 @@ class BorrowingViewSet(
     def get_queryset(self):
         user = self.request.user
         user_id = self.request.query_params.get("user_id")
-        is_active = self.request.query_params.get("is_active", None)
+        is_active = self.request.query_params.get("is_active")
 
         if user.is_superuser and user_id:
             queryset = Borrowing.objects.filter(user_id=user_id)
         elif user.is_superuser:
             queryset = Borrowing.objects.all()
         else:
-            queryset = Borrowing.objects.filter(user=user)
+            queryset = Borrowing.objects.filter(user_id=user.id)
 
         if is_active is not None:
-            queryset = queryset.filter(is_active=is_active)
+            queryset = queryset.filter(actual_return_date__isnull=is_active == "True")
 
         return queryset
 

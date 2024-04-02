@@ -22,5 +22,4 @@ class Borrowing(models.Model):
             f"Borrow Date: {self.borrow_date}, "
             f" Expected Return Date: {self.expected_return_date}, "
             f"Actual Return Date: {self.actual_return_date}"
-            )
-
+        )
