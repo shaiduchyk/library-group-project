@@ -2,21 +2,25 @@ import os
 from dotenv import load_dotenv
 import stripe
 
+from payment_system.models import Payment
+
 load_dotenv()
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 
-def create_test_payment_session():
+def create_payment_session(borrowing):
+    total_amount = borrowing.calculate_borrowing_amount()
+
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         line_items=[{
             "price_data": {
                 "currency": "usd",
+                "unit_amount": int(total_amount * 100),
                 "product_data": {
-                    "name": "Test Book borrowing",
+                    "name": f"Borrowing: {borrowing.id}",
                 },
-                "unit_amount": 10000,
             },
             "quantity": 1,
         }],
@@ -24,7 +28,11 @@ def create_test_payment_session():
         success_url="https://example.com/success",
         cancel_url="https://example.com/cancel",
     )
-    return session
+    payment = Payment.objects.create(
+        borrowing=borrowing,
+        session_url=session.url,
+        session_id=session.id,
+        money_to_pay=total_amount,
+    )
 
-
-print(create_test_payment_session())
+    return payment
