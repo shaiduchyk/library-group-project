@@ -1,11 +1,23 @@
+from django.contrib.auth import get_user_model
 from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from books_service.models import Book
-from books_service.serializers import BookSerializer
+
 from borrowings.models import Borrowing
-from user.serializers import UserSerializer
+
+
+class BookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ('id', 'title', 'author', 'inventory')
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'email')
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
@@ -36,18 +48,18 @@ class BorrowingSerializer(serializers.ModelSerializer):
 
 
 class BorrowingDetailSerializer(BorrowingSerializer):
-    book = BookSerializer(read_only=True)
-    user = UserSerializer(read_only=True)
+    book = BookSerializer()
+    user = UserSerializer()
 
     class Meta:
-        model = Book
+        model = Borrowing
         fields = (
             "id",
-            "title",
-            "author",
-            "inventory",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
             "book",
-            "daily_fee",
+            "user"
         )
 
 
