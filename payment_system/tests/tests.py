@@ -1,12 +1,15 @@
+from datetime import timedelta
+from datetime import date
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.utils import timezone
+from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
 from payment_system.models import Payment, PaymentStatus, PaymentType
 from borrowings.models import Borrowing
 from books_service.models import Book
-from django.contrib.auth import get_user_model
-from datetime import date
+from user.models import User
 
 
 class PaymentModelTests(TestCase):
@@ -146,7 +149,6 @@ class AdminSiteTests(TestCase):
         )
 
     def test_payments_listed(self):
-        """Test that payments are listed on payment page"""
         url = reverse("admin:payment_system_payment_changelist")
         res = self.client.get(url)
 
@@ -154,7 +156,6 @@ class AdminSiteTests(TestCase):
         self.assertContains(res, self.payment.type)
 
     def test_payment_change_page(self):
-        """Test that the payment edit page works"""
         url = reverse(
             "admin:payment_system_payment_change",
             args=[self.payment.id]
@@ -163,7 +164,32 @@ class AdminSiteTests(TestCase):
         self.assertEqual(res.status_code, 200)
 
     def test_create_payment_page(self):
-        """Test that the create payment page works"""
         url = reverse("admin:payment_system_payment_add")
         res = self.client.get(url)
         self.assertEqual(res.status_code, 200)
+
+
+class PaymentTestCase(TestCase):
+    def setUp(self):
+        user = User.objects.create_user(email='testuser@test.com', password='12345')
+
+        book = Book.objects.create(
+            title="Test Book",
+            author="Test Author",
+            cover=Book.Covers.HARD,
+            inventory=10,
+            daily_fee=1.00
+        )
+
+        borrow_date = timezone.now().date()
+        expected_return_date = borrow_date + timedelta(days=10)
+        self.borrowing = Borrowing.objects.create(
+            borrow_date=borrow_date,
+            expected_return_date=expected_return_date,
+            book=book,
+            user=user
+        )
+
+    def test_payment_creation(self):
+        payment = Payment.objects.create(borrowing=self.borrowing)
+        self.assertEqual(payment.money_to_pay, 10.00)
