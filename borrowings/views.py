@@ -31,10 +31,9 @@ class BorrowingViewSet(
             if not return_date:
                 raise ValidationError("No actual return date provided")
             if borrowing.is_active:
-                borrowing.actual_return_date = request.data.get("actual_return_date")
+                borrowing.actual_return_date = return_date
                 book = borrowing.book
                 book.inventory += 1
-                borrowing.is_active = False
                 book.save()
                 borrowing.save()
                 serializer = self.get_serializer(borrowing)
