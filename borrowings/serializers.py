@@ -10,7 +10,7 @@ from user.serializers import UserSerializer
 
 class BorrowingSerializer(serializers.ModelSerializer):
     book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
-    actual_return_date = serializers.DateField(required=False, allow_null=True)
+    actual_return_date = serializers.DateField(read_only=True, required=False, allow_null=True)
 
     class Meta:
         model = Borrowing
