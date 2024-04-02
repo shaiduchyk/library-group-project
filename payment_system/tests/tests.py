@@ -31,7 +31,6 @@ class PaymentModelTests(TestCase):
             actual_return_date=date.today(),
             book=self.book,
             user=self.user,
-            is_active=True,
         )
         self.payment = Payment.objects.create(
             status=PaymentStatus.PENDING,
@@ -73,7 +72,6 @@ class PaymentViewSetTests(TestCase):
             actual_return_date=date.today(),
             book=self.book,
             user=self.user,
-            is_active=True,
         )
         self.payment = Payment.objects.create(
             status=PaymentStatus.PENDING,
@@ -138,7 +136,6 @@ class AdminSiteTests(TestCase):
             actual_return_date=date.today(),
             book=self.book,
             user=self.user,
-            is_active=True,
         )
         self.payment = Payment.objects.create(
             status=PaymentStatus.PENDING,
