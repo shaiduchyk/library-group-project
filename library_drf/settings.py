@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "books_service",
     "borrowings",
     "payment_system",
+    "drf_spectacular",
+    "django_q",
 ]
 
 AUTH_USER_MODEL = "user.User"
@@ -78,6 +80,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "library_drf.wsgi.application"
+
+Q_CLUSTER = {
+    "name": "library_drf",
+    "workers": 4,
+    "timeout": 300,
+    "retry": 180,
+    "queue_limit": 50,
+    "bulk": 10,
+    "orm": "default"
+}
 
 
 # Database
@@ -113,6 +125,20 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Library Borrow API",
+    "DESCRIPTION": "Here u can order some books for you, and your family!",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "defaultModelRendering": "model",
+        "defaultModelsExpandDepth": 2,
+        "defaultModelExpandDepth": 2,
+    },
 }
 
 
