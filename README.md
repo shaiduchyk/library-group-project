@@ -32,9 +32,13 @@ For beginning you have to install Python3+, PostgresSQL and create db
 ```shell
 
 git clone https://github.com/shaiduchyk/library-group-project.git
-cd cinema_API
-python -m venv venv 
-source venv/bin/activate 
+python -m venv venv
+
+* MacOS *
+source venv/bin/activate
+* Windows *
+venv/scripts/activate
+
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
