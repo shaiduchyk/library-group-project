@@ -73,14 +73,7 @@ class PaymentViewSetTests(TestCase):
             book=self.book,
             user=self.user,
         )
-        self.payment = Payment.objects.create(
-            status=PaymentStatus.PENDING,
-            type=PaymentType.PAYMENT,
-            borrowing=self.borrowing,
-            session_url="http://test.com",
-            session_id="123456",
-            money_to_pay=100.00,
-        )
+        self.payment = Payment.objects.get(borrowing=self.borrowing)
 
     def test_list_payments(self):
         self.client.force_authenticate(user=self.user)
