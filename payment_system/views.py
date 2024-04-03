@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from payment_system.models import Payment
-from .serializers import PaymentSerializer
+from payment_system.serializers import PaymentSerializer
 
 
 class PaymentViewSet(

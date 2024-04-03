@@ -8,10 +8,11 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Borrowing
+from borrowings.models import Borrowing
 from borrowings.serializers import (
     BorrowingSerializer,
-    BorrowingReturnSerializer, BorrowingDetailSerializer,
+    BorrowingReturnSerializer,
+    BorrowingDetailSerializer,
 )
 
 
@@ -34,7 +35,13 @@ class BorrowingViewSet(
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    @action(detail=True, methods=["post", "get"])
+
+    @action(
+        detail=True,
+        methods=["post", "get"],
+        url_path="return-borrowing"
+    )
+
     def return_borrowing(self, request, pk=None):
         with transaction.atomic():
             borrowing = self.get_object()
@@ -48,6 +55,7 @@ class BorrowingViewSet(
                 book.inventory += 1
                 book.save()
                 borrowing.save()
+                borrowing.create_fine_payment_if_overdue()
                 serializer = self.get_serializer(borrowing)
                 return Response(serializer.data)
             raise ValidationError("This borrowing is already finished")
@@ -65,7 +73,9 @@ class BorrowingViewSet(
             queryset = Borrowing.objects.filter(user_id=user.id)
 
         if is_active is not None:
-            queryset = queryset.filter(actual_return_date__isnull=is_active == "True")
+            queryset = queryset.filter(
+                actual_return_date__isnull=is_active == "True"
+            )
 
         return queryset
 
