@@ -116,7 +116,6 @@ class BorrowingReturnSerializer(BorrowingSerializer):
         borrow_date = attrs.get("borrow_date")
         actual_return_date = attrs.get("actual_return_date")
 
-
         if (
                 borrow_date
                 and actual_return_date
