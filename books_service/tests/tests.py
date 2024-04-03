@@ -61,7 +61,7 @@ class BookModelTest(TestCase):
         data = {"title": "Updated Book"}
         response = self.client.patch(
             reverse(
-                f"books_service:book-detail",
+                "books_service:book-detail",
                 args=[self.book.id]
             ), data
         )
@@ -75,7 +75,7 @@ class BookModelTest(TestCase):
         )
         response = self.client.patch(
             reverse(
-                f"books_service:book-detail",
+                "books_service:book-detail",
                 args=[self.book.id]
             ), data
         )
@@ -83,7 +83,7 @@ class BookModelTest(TestCase):
 
     def test_delete_book_unauthorized(self):
         response = self.client.delete(
-            reverse(f"books_service:book-detail", args=[self.book.id])
+            reverse("books_service:book-detail", args=[self.book.id])
         )
         self.assertEqual(response.status_code, 401)
 
@@ -93,6 +93,6 @@ class BookModelTest(TestCase):
             + str(RefreshToken.for_user(self.admin).access_token)
         )
         response = self.client.delete(
-            reverse(f"books_service:book-detail", args=[self.book.id])
+            reverse("books_service:book-detail", args=[self.book.id])
         )
         self.assertEqual(response.status_code, 204)

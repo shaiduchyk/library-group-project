@@ -10,7 +10,7 @@ from payment_system.services.stripe_services import create_payment_session
 
 
 class Borrowing(models.Model):
-    borrow_date = models.DateField()
+    borrow_date = models.DateField(auto_now_add=True)
     expected_return_date = models.DateField()
     actual_return_date = models.DateField(null=True, blank=True)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
@@ -34,13 +34,6 @@ class Borrowing(models.Model):
     def is_active(self):
         return self.actual_return_date is None
 
-    def __str__(self):
-        return (
-            f"Borrow Date: {self.borrow_date}, "
-            f" Expected Return Date: {self.expected_return_date}, "
-            f"Actual Return Date: {self.actual_return_date}"
-        )
-
     def create_fine_payment_if_overdue(self):
         if isinstance(self.actual_return_date, str):
             self.actual_return_date = datetime.strptime(
@@ -59,3 +52,10 @@ class Borrowing(models.Model):
             FinePayment.objects.create(
                 borrowing=self, money_to_pay=fine_amount
             )
+
+    def __str__(self):
+        return (
+            f"Borrow Date: {self.borrow_date}, "
+            f" Expected Return Date: {self.expected_return_date}, "
+            f"Actual Return Date: {self.actual_return_date}"
+        )

@@ -49,7 +49,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         borrow_date = attrs.get("borrow_date")
         expected_return_date = attrs.get("expected_return_date")
-        user = self.context['request'].user
+        user = self.context["request"].user
         if not user.is_authenticated or not user.is_active:
             raise AuthenticationFailed(
                 "You must be an active authenticated user.")
