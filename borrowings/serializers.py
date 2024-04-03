@@ -32,6 +32,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
     payments = PaymentSerializer(
         many=True, read_only=True, source="payment_set"
     )
+
     user = UserSerializer(read_only=True)
 
     class Meta:
@@ -59,7 +60,9 @@ class BorrowingSerializer(serializers.ModelSerializer):
                 and expected_return_date < borrow_date
         ):
             raise serializers.ValidationError(
-                "Expected return date cannot be earlier than borrow date.")
+                "Expected return date cannot be earlier than borrow date."
+            )
+
         return attrs
 
     def create(self, validated_data):
@@ -113,9 +116,14 @@ class BorrowingReturnSerializer(BorrowingSerializer):
         borrow_date = attrs.get("borrow_date")
         actual_return_date = attrs.get("actual_return_date")
 
-        if (borrow_date
+
+        if (
+                borrow_date
                 and actual_return_date
-                and actual_return_date < borrow_date):
+                and actual_return_date < borrow_date
+        ):
             raise serializers.ValidationError(
-                "Actual return date cannot be earlier than borrow date.")
+                "Actual return date cannot be earlier than borrow date."
+            )
+
         return attrs

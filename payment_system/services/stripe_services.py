@@ -8,7 +8,6 @@ load_dotenv()
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
-
 def create_payment_session(borrowing):
     from payment_system.models import Payment
     total_amount = borrowing.calculate_borrowing_amount()
@@ -26,8 +25,9 @@ def create_payment_session(borrowing):
             "quantity": 1,
         }],
         mode="payment",
-        success_url="https://example.com/success",
-        cancel_url="https://example.com/cancel",
+        success_url="http://localhost:8000/api/"
+        "payments/success/",
+        cancel_url="http://localhost:8000/api/payments/cancel/"
     )
     payment = Payment.objects.create(
         borrowing=borrowing,

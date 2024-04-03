@@ -1,5 +1,7 @@
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
 
 from payment_system.models import Payment
 from payment_system.serializers import PaymentSerializer
@@ -19,3 +21,21 @@ class PaymentViewSet(
                 return Payment.objects.all()
             return Payment.objects.filter(borrowing__user=user)
         return Payment.objects.none()
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="success"
+    )
+    def success(self, request, pk=None):
+        return Response(
+                {"message": "Payment marked as paid."},
+                status=status.HTTP_200_OK
+            )
+
+    @action(detail=False, methods=["get"])
+    def cancel(self, request, pk=None):
+        return Response(
+            {"message": "You have cancer"},
+            status=status.HTTP_200_OK
+        )
