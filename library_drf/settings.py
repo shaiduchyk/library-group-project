@@ -84,8 +84,8 @@ WSGI_APPLICATION = "library_drf.wsgi.application"
 Q_CLUSTER = {
     "name": "library_drf",
     "workers": 4,
-    "timeout": 300,
-    "retry": 180,
+    "timeout": 30,
+    "retry": 60,
     "queue_limit": 50,
     "bulk": 10,
     "orm": "default"

@@ -1,10 +1,10 @@
 from datetime import datetime
+from library_drf import settings
 
 from django.db import models
 
 from books_service.models import Book
 
-from library_drf import settings
 from payment_system.models import FinePayment
 from payment_system.services.stripe_services import create_payment_session
 
@@ -43,11 +43,19 @@ class Borrowing(models.Model):
 
     def create_fine_payment_if_overdue(self):
         if isinstance(self.actual_return_date, str):
-            self.actual_return_date = datetime.strptime(self.actual_return_date, "%Y-%m-%d").date()
+            self.actual_return_date = datetime.strptime(
+                self.actual_return_date, "%Y-%m-%d"
+            ).date()
         if isinstance(self.expected_return_date, str):
-            self.expected_return_date = datetime.strptime(self.expected_return_date, "%Y-%m-%d").date()
+            self.expected_return_date = datetime.strptime(
+                self.expected_return_date, "%Y-%m-%d"
+            ).date()
 
         if self.actual_return_date > self.expected_return_date:
-            days_overdue = (self.actual_return_date - self.expected_return_date).days
+            days_overdue = (
+                self.actual_return_date - self.expected_return_date
+            ).days
             fine_amount = days_overdue * self.book.daily_fee * 2
-            FinePayment.objects.create(borrowing=self, money_to_pay=fine_amount)
+            FinePayment.objects.create(
+                borrowing=self, money_to_pay=fine_amount
+            )
