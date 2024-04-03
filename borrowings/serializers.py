@@ -1,30 +1,38 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
+
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, AuthenticationFailed
 
 from books_service.models import Book
-
 from borrowings.models import Borrowing
+
 from payment_system.serializers import PaymentSerializer
 
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ('id', 'title', 'author', 'inventory')
+        fields = ("id", "title", "author", "inventory")
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email')
+        fields = ("id", "email")
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
     book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
-    actual_return_date = serializers.DateField(read_only=True, required=False, allow_null=True)
-    payments = PaymentSerializer(many=True, read_only=True, source="payment_set")
+    actual_return_date = serializers.DateField(
+        read_only=True,
+        required=False,
+        allow_null=True
+    )
+    payments = PaymentSerializer(
+        many=True, read_only=True, source="payment_set"
+    )
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Borrowing
@@ -41,8 +49,17 @@ class BorrowingSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         borrow_date = attrs.get("borrow_date")
         expected_return_date = attrs.get("expected_return_date")
-        if borrow_date and expected_return_date and expected_return_date < borrow_date:
-            raise serializers.ValidationError("Expected return date cannot be earlier than borrow date.")
+        user = self.context['request'].user
+        if not user.is_authenticated or not user.is_active:
+            raise AuthenticationFailed(
+                "You must be an active authenticated user.")
+        if (
+                borrow_date
+                and expected_return_date
+                and expected_return_date < borrow_date
+        ):
+            raise serializers.ValidationError(
+                "Expected return date cannot be earlier than borrow date.")
         return attrs
 
     def create(self, validated_data):
@@ -51,7 +68,9 @@ class BorrowingSerializer(serializers.ModelSerializer):
             book = Book.objects.get(id=book_data.id)
             if book.inventory < 1:
                 raise ValidationError("the following book is not available")
-            borrowing = Borrowing.objects.create(**validated_data, book=book_data)
+            borrowing = Borrowing.objects.create(
+                **validated_data, book=book_data
+            )
             book.inventory -= 1
             book.save()
             return borrowing
@@ -89,3 +108,14 @@ class BorrowingReturnSerializer(BorrowingSerializer):
             "expected_return_date",
             "book"
         )
+
+    def validate(self, attrs):
+        borrow_date = attrs.get("borrow_date")
+        actual_return_date = attrs.get("actual_return_date")
+
+        if (borrow_date
+                and actual_return_date
+                and actual_return_date < borrow_date):
+            raise serializers.ValidationError(
+                "Actual return date cannot be earlier than borrow date.")
+        return attrs

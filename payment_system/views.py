@@ -2,7 +2,7 @@ from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAdminUser
 
 from payment_system.models import Payment
-from .serializers import PaymentSerializer
+from payment_system.serializers import PaymentSerializer
 
 
 class PaymentViewSet(

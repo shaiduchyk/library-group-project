@@ -8,10 +8,11 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Borrowing
+from borrowings.models import Borrowing
 from borrowings.serializers import (
     BorrowingSerializer,
-    BorrowingReturnSerializer, BorrowingDetailSerializer,
+    BorrowingReturnSerializer,
+    BorrowingDetailSerializer,
 )
 
 
@@ -30,6 +31,9 @@ class BorrowingViewSet(
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated,)
     pagination_class = BorrowingPagination
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     @action(detail=True, methods=["post", "get"])
     def return_borrowing(self, request, pk=None):
@@ -63,7 +67,9 @@ class BorrowingViewSet(
             queryset = Borrowing.objects.filter(user_id=user.id)
 
         if is_active is not None:
-            queryset = queryset.filter(actual_return_date__isnull=is_active == "True")
+            queryset = queryset.filter(
+                actual_return_date__isnull=is_active == "True"
+            )
 
         return queryset
 
