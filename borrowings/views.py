@@ -45,6 +45,7 @@ class BorrowingViewSet(
                 book.inventory += 1
                 book.save()
                 borrowing.save()
+                borrowing.create_fine_payment_if_overdue()
                 serializer = self.get_serializer(borrowing)
                 return Response(serializer.data)
             raise ValidationError("This borrowing is already finished")
