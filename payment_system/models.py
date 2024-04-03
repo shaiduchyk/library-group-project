@@ -22,7 +22,9 @@ class Payment(models.Model):
         choices=PaymentType.choices,
         default=PaymentType.PAYMENT
     )
-    borrowing = models.ForeignKey("borrowings.Borrowing", on_delete=models.CASCADE)
+    borrowing = models.ForeignKey(
+        "borrowings.Borrowing", on_delete=models.CASCADE
+    )
     session_url = models.URLField(blank=True, null=True)
     session_id = models.CharField(max_length=60, blank=True, null=True)
     money_to_pay = models.DecimalField(max_digits=10, decimal_places=2)
@@ -36,7 +38,9 @@ class Payment(models.Model):
 
 
 class FinePayment(models.Model):
-    borrowing = models.ForeignKey("borrowings.Borrowing", on_delete=models.CASCADE)
+    borrowing = models.ForeignKey(
+        "borrowings.Borrowing", on_delete=models.CASCADE
+    )
     money_to_pay = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)
 
