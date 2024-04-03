@@ -23,6 +23,34 @@ This project aims to create a web application using Django REST Framework (DRF) 
 
 -------------------------------------------------------------------------------------
 
+## Installation using GitHub
+ 
+For beginning you have to install Python3+, PostgresSQL and create db
+ 
+**In terminal write down following command:**
+
+```shell
+
+git clone https://github.com/shaiduchyk/library-group-project.git
+cd cinema_API
+python -m venv venv 
+source venv/bin/activate 
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+ 
+```
+## Run with docker
+ 
+Docker should be installed
+```shell
+docker-compose build
+docker-compose up
+ 
+```
+
+-------------------------------------------------------------------------------------
+
 ## API Reference
 
 #### Before start using this API Project, u should use register(if not yet) or use JWT Token for authentication if u already register.
