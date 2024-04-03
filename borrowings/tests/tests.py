@@ -32,7 +32,10 @@ class BorrowingViewSetTestCase(TestCase):
     def test_retrieve_borrowing(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(
-            reverse("borrowings:borrowing-detail", kwargs={"pk": self.borrowing.pk})
+            reverse(
+                "borrowings:borrowing-detail",
+                kwargs={"pk": self.borrowing.pk}
+            )
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["id"], self.borrowing.id)
@@ -40,7 +43,10 @@ class BorrowingViewSetTestCase(TestCase):
     def test_return_borrowing(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.post(
-            reverse("borrowings:borrowing-return-borrowing", kwargs={"pk": self.borrowing.pk}),
+            reverse(
+                "borrowings:borrowing-return-borrowing",
+                kwargs={"pk": self.borrowing.pk}
+            ),
             data={"actual_return_date": date.today().isoformat()}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
