@@ -35,7 +35,11 @@ class BorrowingViewSet(
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    @action(detail=True, methods=["post", "get"])
+    @action(
+        detail=True,
+        methods=["post", "get"],
+        url_path="return-borrowing"
+    )
     def return_borrowing(self, request, pk=None):
         with transaction.atomic():
             borrowing = self.get_object()
