@@ -2,7 +2,7 @@ from django.db import transaction
 
 from rest_framework import mixins
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -30,6 +30,9 @@ class BorrowingViewSet(
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated,)
     pagination_class = BorrowingPagination
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     @action(detail=True, methods=["post", "get"])
     def return_borrowing(self, request, pk=None):
