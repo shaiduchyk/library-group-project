@@ -26,8 +26,8 @@ def create_payment_session(borrowing):
         }],
         mode="payment",
         success_url="http://localhost:8000/api/"
-        "payments/success/",
-        cancel_url="http://localhost:8000/api/payments/cancel/"
+        "payments/<int:pk>/success/",
+        cancel_url="http://localhost:8000/api/payments/<int:pk>/cancel/"
     )
     payment = Payment.objects.create(
         borrowing=borrowing,
