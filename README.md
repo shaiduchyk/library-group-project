@@ -145,13 +145,13 @@ Note: You can get further resources if you are authenticated (**ex. Book List pa
 #### Get info about your payment (if you already have one, and it is success)
 
 ```http
-   GET /api/payments/success/
+   GET /api/payments/<int:pk>/success/
 ```
 
 #### Get info about your payment (if you already have one, and it is failed)
 
 ```http
-   GET /api/payments/cancel/
+   GET /api/payments/<int:pk>/cancel/
 ```
 ---------------------------------------------------------------------------------------
 
