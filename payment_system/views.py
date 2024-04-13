@@ -23,17 +23,20 @@ class PaymentViewSet(
         return Payment.objects.none()
 
     @action(
-        detail=False,
+        detail=True,
         methods=["get"],
         url_path="success"
     )
     def success(self, request, pk=None):
+        payment = Payment.objects.get(id=pk)
+        payment.status = "PAID"
+        payment.save()
         return Response(
                 {"message": "Payment marked as paid."},
                 status=status.HTTP_200_OK
             )
 
-    @action(detail=False, methods=["get"])
+    @action(detail=True, methods=["get"])
     def cancel(self, request, pk=None):
         return Response(
             {"message": "You have cancer"},
